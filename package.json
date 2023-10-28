@@ -1,0 +1,41 @@
+{
+  "name": "greedyshop",
+  "version": "1.0.0",
+  "description": "Tienda Online con Node.js con Express y MongoDB",
+  "main": "app.js",
+  "scripts": {
+    "build": "babel ./src --out-dir build",
+    "dev": "cross-env NODE_ENV=development nodemon ./src/app.js --exec babel-node",
+    "start": "cross-env NODE_ENV=production node ./build/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "exeDev",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.4",
+    "@babel/node": "^7.20.7",
+    "@babel/preset-env": "^7.21.4",
+    "nodemon": "^2.0.22"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "cloudinary": "^1.37.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "csrf": "^3.1.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-validator": "^6.15.0",
+    "fs-extra": "^11.1.1",
+    "helmet": "^6.0.1",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^5.3.0",
+    "mongoose": "^7.0.3",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.1",
+    "shortid": "^2.2.16"
+  }
+}
