@@ -82,8 +82,9 @@ const signUp = async (req, res, next) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  const userFound = await client.findOne({ email: email }).populate("roles");
-
+  const userFound = await client
+    .findOne({ email: email })
+    .populate({ path: "roles", select: "name -_id" });
   if (!userFound)
     return res.status(401).json({ message: "Invalid credentials" });
 
@@ -96,7 +97,7 @@ const login = async (req, res) => {
     expiresIn: 86400,
   });
 
-  res.status(200).json({ user: userFound, token: token });
+  res.status(200).json({ user: userFound.roles, token: token });
 };
 
 module.exports = {

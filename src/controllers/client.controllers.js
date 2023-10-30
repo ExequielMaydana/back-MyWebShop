@@ -104,9 +104,10 @@ const deleteClient = async (req, res, next) => {
 
 const getMyUser = async (req, res, next) => {
   try {
-    const myUser = await client.find({ _id: req.userId });
-    // .select("-token -_id -password -createdAt -updatedAt")
-    // .populate({ path: "roles", select: "name -_id" });
+    const myUser = await client
+      .find({ _id: req.userId })
+      .select("-token -_id -password -createdAt -updatedAt")
+      .populate({ path: "roles", select: "name -_id" });
     res.status(200).json(myUser);
   } catch (error) {
     res.status(400).json("error getMyUser", error);
