@@ -8,14 +8,16 @@ const postImage = async (req, res, next) => {
 
   try {
     const result = await cloudinary.uploader.upload(pathFile);
-    await fs.unlink(pathFile);
-
     const newPhoto = new images({
       title,
       position,
       imageURL: result.secure_url,
       public_id: result.public_id,
     });
+
+    if (req.file) {
+      await fs.unlink(req.file.path);
+    }
 
     await newPhoto.save();
     res.status(200).json({
