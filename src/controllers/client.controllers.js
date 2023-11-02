@@ -1,6 +1,8 @@
 const client = require("../models/clients.model");
 const rol = require("../models/roles.model");
 const { hashPassword } = require("../libs/crypt");
+const cloudinary = require("../libs/configCloudinary");
+const fs = require("fs-extra");
 
 // este controlador es para que el admin pueda crear nuevos usuarios
 const createUser = async (req, res, next) => {
@@ -132,6 +134,37 @@ const updateMyUser = async (req, res, next) => {
   }
 };
 
+const updateMyPhoto = async (req, res, next) => {
+  try {
+    let imageUrl = "";
+    let publicId = "";
+
+    if (req.file) {
+      const uploadResult = await cloudinary.uploader.upload(req.file.path);
+      imageUrl = uploadResult.secure_url;
+      publicId = uploadResult.public_id;
+    }
+
+    const newProfilePhoto = await client.findOneAndUpdate(
+      { _id: req.userId },
+      { profileImage: { imageUrl, publicId } },
+      { new: true }
+    );
+
+    if (req.file) {
+      await fs.unlink(req.file.path);
+    }
+
+    res.status(200).json({
+      message: "The profile picture was successfully modified.",
+      newProfilePhoto,
+    });
+  } catch (error) {
+    res.status(500).json(error);
+    next();
+  }
+};
+
 const deleteMyUser = async (req, res, next) => {
   try {
     await client.findOneAndDelete({ _id: req.userId });
@@ -151,5 +184,6 @@ module.exports = {
 
   getMyUser,
   updateMyUser,
+  updateMyPhoto,
   deleteMyUser,
 };

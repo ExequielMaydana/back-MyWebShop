@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { verifyToken, isAdmin, isUser } = require("../middleware/authorization");
 const { validateSignUp } = require("../middleware/validatorSignup");
-
+const upload = require("../libs/multerConfig");
 const clientControllers = require("../controllers/client.controllers");
 
 router
@@ -15,14 +15,14 @@ router
   .get([verifyToken], clientControllers.getMyUser)
   .put([verifyToken], clientControllers.updateMyUser)
   .delete([verifyToken], clientControllers.deleteMyUser);
-
+router
+  .route("/me/profile-photo")
+  .put([verifyToken], upload.single("file"), clientControllers.updateMyPhoto);
 router
   .route("/:id")
   .get([verifyToken, isAdmin], clientControllers.getClientById)
   .put([verifyToken, isAdmin], clientControllers.updateClient)
   .delete([verifyToken, isAdmin], clientControllers.deleteClient);
-
-
 
 module.exports = {
   router,
