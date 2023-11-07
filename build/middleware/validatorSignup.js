@@ -51,9 +51,7 @@ var verifiCsrfToken = function verifiCsrfToken(req, res, next) {
   });
   next();
 };
-var validateSignUp = [
-// validacion
-check("full_name").notEmpty().isLength({
+var validateSignUp = [check("full_name").notEmpty().isLength({
   min: 3
 }).withMessage("El nombre debe contener al menos 3 caracteres"), check("email").notEmpty().matches(/^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/).withMessage("Eso no parece un correo válido."), check("password").notEmpty().withMessage("La contraseña es obligatoria").matches(/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/).withMessage("La contraseña debe tener entre 8 y 16 caracteres, al menos un numero, al menos una minúscula y al menos una mayúscula"), check("confirmpassword").notEmpty().withMessage("Debes confirmar la contraseña").custom(function (value, _ref2) {
   var req = _ref2.req;

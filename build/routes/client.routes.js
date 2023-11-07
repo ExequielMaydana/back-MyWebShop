@@ -7,11 +7,13 @@ var _require = require("../middleware/authorization"),
   isUser = _require.isUser;
 var _require2 = require("../middleware/validatorSignup"),
   validateSignUp = _require2.validateSignUp;
+var upload = require("../libs/multerConfig");
 var clientControllers = require("../controllers/client.controllers");
 router.route("/crear-usuario").post([verifyToken, isAdmin, validateSignUp], clientControllers.createUser); // ruta para que el admin pueda crear usuario
 
 router.route("/").get([verifyToken, isAdmin], clientControllers.getAllClients);
 router.route("/me").get([verifyToken], clientControllers.getMyUser).put([verifyToken], clientControllers.updateMyUser)["delete"]([verifyToken], clientControllers.deleteMyUser);
+router.route("/me/profile-photo").put([verifyToken], upload.single("file"), clientControllers.updateMyPhoto);
 router.route("/:id").get([verifyToken, isAdmin], clientControllers.getClientById).put([verifyToken, isAdmin], clientControllers.updateClient)["delete"]([verifyToken, isAdmin], clientControllers.deleteClient);
 module.exports = {
   router: router

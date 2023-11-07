@@ -8,6 +8,8 @@ var client = require("../models/clients.model");
 var rol = require("../models/roles.model");
 var _require = require("../libs/crypt"),
   hashPassword = _require.hashPassword;
+var cloudinary = require("../libs/configCloudinary");
+var fs = require("fs-extra");
 
 // este controlador es para que el admin pueda crear nuevos usuarios
 var createUser = /*#__PURE__*/function () {
@@ -242,9 +244,7 @@ var getMyUser = /*#__PURE__*/function () {
           });
         case 3:
           myUser = _context6.sent;
-          res.status(200).json({
-            myUser: myUser
-          });
+          res.status(200).json(myUser);
           _context6.next = 11;
           break;
         case 7:
@@ -298,13 +298,74 @@ var updateMyUser = /*#__PURE__*/function () {
     return _ref7.apply(this, arguments);
   };
 }();
-var deleteMyUser = /*#__PURE__*/function () {
+var updateMyPhoto = /*#__PURE__*/function () {
   var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(req, res, next) {
+    var imageUrl, publicId, uploadResult, newProfilePhoto;
     return _regeneratorRuntime().wrap(function _callee8$(_context8) {
       while (1) switch (_context8.prev = _context8.next) {
         case 0:
           _context8.prev = 0;
-          _context8.next = 3;
+          imageUrl = "";
+          publicId = "";
+          if (!req.file) {
+            _context8.next = 9;
+            break;
+          }
+          _context8.next = 6;
+          return cloudinary.uploader.upload(req.file.path);
+        case 6:
+          uploadResult = _context8.sent;
+          imageUrl = uploadResult.secure_url;
+          publicId = uploadResult.public_id;
+        case 9:
+          _context8.next = 11;
+          return client.findOneAndUpdate({
+            _id: req.userId
+          }, {
+            profileImage: {
+              imageUrl: imageUrl,
+              publicId: publicId
+            }
+          }, {
+            "new": true
+          });
+        case 11:
+          newProfilePhoto = _context8.sent;
+          if (!req.file) {
+            _context8.next = 15;
+            break;
+          }
+          _context8.next = 15;
+          return fs.unlink(req.file.path);
+        case 15:
+          res.status(200).json({
+            message: "The profile picture was successfully modified.",
+            newProfilePhoto: newProfilePhoto
+          });
+          _context8.next = 22;
+          break;
+        case 18:
+          _context8.prev = 18;
+          _context8.t0 = _context8["catch"](0);
+          res.status(500).json(_context8.t0);
+          next();
+        case 22:
+        case "end":
+          return _context8.stop();
+      }
+    }, _callee8, null, [[0, 18]]);
+  }));
+  return function updateMyPhoto(_x22, _x23, _x24) {
+    return _ref8.apply(this, arguments);
+  };
+}();
+var deleteMyUser = /*#__PURE__*/function () {
+  var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(req, res, next) {
+    return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+      while (1) switch (_context9.prev = _context9.next) {
+        case 0:
+          _context9.prev = 0;
+          _context9.next = 3;
           return client.findOneAndDelete({
             _id: req.userId
           });
@@ -312,23 +373,23 @@ var deleteMyUser = /*#__PURE__*/function () {
           res.status(200).json({
             message: "The user was successfully modified"
           });
-          _context8.next = 10;
+          _context9.next = 10;
           break;
         case 6:
-          _context8.prev = 6;
-          _context8.t0 = _context8["catch"](0);
+          _context9.prev = 6;
+          _context9.t0 = _context9["catch"](0);
           res.status(400).json({
-            error: _context8.t0
+            error: _context9.t0
           });
           next();
         case 10:
         case "end":
-          return _context8.stop();
+          return _context9.stop();
       }
-    }, _callee8, null, [[0, 6]]);
+    }, _callee9, null, [[0, 6]]);
   }));
-  return function deleteMyUser(_x22, _x23, _x24) {
-    return _ref8.apply(this, arguments);
+  return function deleteMyUser(_x25, _x26, _x27) {
+    return _ref9.apply(this, arguments);
   };
 }();
 module.exports = {
@@ -339,5 +400,6 @@ module.exports = {
   deleteClient: deleteClient,
   getMyUser: getMyUser,
   updateMyUser: updateMyUser,
+  updateMyPhoto: updateMyPhoto,
   deleteMyUser: deleteMyUser
 };

@@ -23,9 +23,21 @@ var clientSchema = new Schema({
     type: String,
     trim: true
   },
+  dni: {
+    type: Number,
+    trim: true
+  },
+  phone: {
+    type: Number,
+    trim: true
+  },
   status: {
     type: String,
     "default": "Active"
+  },
+  profileImage: {
+    imageUrl: String,
+    publicId: String
   },
   // token: {
   //   type: String,
@@ -36,10 +48,10 @@ var clientSchema = new Schema({
   // },
   roles: [{
     type: Schema.Types.ObjectId,
-    ref: "rol"
+    ref: "roles"
   }]
 }, {
   timestamps: true,
   versionKey: false
 });
-module.exports = mongoose.model("client", clientSchema);
+module.exports = mongoose.model("clients", clientSchema);

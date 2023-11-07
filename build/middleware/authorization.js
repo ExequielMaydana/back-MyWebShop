@@ -11,50 +11,29 @@ var client = require("../models/clients.model");
 var rol = require("../models/roles.model");
 var verifyToken = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(req, res, next) {
-    var token, decoded, userFound;
+    var token, decoded;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          _context.prev = 0;
           // recibimos un token
           token = req.headers["x-access-token"]; // verificamos si existe.
           if (token) {
-            _context.next = 4;
+            _context.next = 3;
             break;
           }
           return _context.abrupt("return", res.status(403).json({
             message: "I do not provide the token"
           }));
-        case 4:
+        case 3:
           // si existe, extraemos lo que esta dentro del token
           decoded = jwt.verify(token, process.env.SECRET_WORD);
           req.userId = decoded.id;
-
-          // busco ese usuario con ese id del token que lo almacene en req.userId
-          _context.next = 8;
-          return client.findById(req.userId, {
-            password: 0
-          });
-        case 8:
-          userFound = _context.sent;
-          // verifico si existe un usuario con ese id del token
-          if (userFound) {
-            res.status(200).json();
-          }
-          _context.next = 16;
-          break;
-        case 12:
-          _context.prev = 12;
-          _context.t0 = _context["catch"](0);
-          res.status(401).json({
-            message: "Unauthorized"
-          });
-          return _context.abrupt("return", next());
-        case 16:
+          next();
+        case 6:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 12]]);
+    }, _callee);
   }));
   return function verifyToken(_x, _x2, _x3) {
     return _ref.apply(this, arguments);
