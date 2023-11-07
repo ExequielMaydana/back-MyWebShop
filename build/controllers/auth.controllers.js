@@ -8,73 +8,102 @@ var _require = require("../libs/crypt"),
   hashPassword = _require.hashPassword,
   comparePassword = _require.comparePassword;
 var jwt = require("jsonwebtoken");
+var cloudinary = require("../libs/configCloudinary");
+var fs = require("fs-extra");
 var client = require("../models/clients.model");
 var rol = require("../models/roles.model");
 var signUp = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(req, res, next) {
-    var _req$body, full_name, email, password, roles, newClient, roleFound, defaultRole, tokenUser;
+    var _req$body, full_name, email, password, roles, profileImage, dni, phone, newClient, imageUrl, publicId, roleFound, defaultRole, uploadResult, tokenUser;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          _req$body = req.body, full_name = _req$body.full_name, email = _req$body.email, password = _req$body.password, roles = _req$body.roles;
+          _req$body = req.body, full_name = _req$body.full_name, email = _req$body.email, password = _req$body.password, roles = _req$body.roles, profileImage = _req$body.profileImage, dni = _req$body.dni, phone = _req$body.phone;
           newClient = new client({
             full_name: full_name,
             email: email,
             password: hashPassword(password),
-            roles: roles
+            roles: roles,
+            dni: dni,
+            phone: phone,
+            profileImage: profileImage
           });
+          imageUrl = "";
+          publicId = "";
           if (!roles) {
-            _context.next = 9;
+            _context.next = 11;
             break;
           }
-          _context.next = 5;
+          _context.next = 7;
           return rol.find({
             name: {
               $in: roles
             }
           });
-        case 5:
+        case 7:
           roleFound = _context.sent;
           newClient.roles = roleFound.map(function (rol) {
             return rol._id;
           });
-          _context.next = 13;
+          _context.next = 15;
           break;
-        case 9:
-          _context.next = 11;
+        case 11:
+          _context.next = 13;
           return rol.findOne({
             name: "user"
           });
-        case 11:
+        case 13:
           defaultRole = _context.sent;
           newClient.roles = [defaultRole._id];
-        case 13:
+        case 15:
+          if (!req.file) {
+            _context.next = 21;
+            break;
+          }
+          _context.next = 18;
+          return cloudinary.uploader.upload(req.file.path);
+        case 18:
+          uploadResult = _context.sent;
+          imageUrl = uploadResult.secure_url;
+          publicId = uploadResult.public_id;
+        case 21:
+          if (!req.file) {
+            _context.next = 24;
+            break;
+          }
+          _context.next = 24;
+          return fs.unlink(req.file.path);
+        case 24:
           tokenUser = jwt.sign({
             id: newClient._id
           }, process.env.SECRET_WORD, {
             expiresIn: 3600
           });
-          _context.prev = 14;
           newClient.token = tokenUser;
-          _context.next = 18;
+          newClient.profileImage = {
+            imageUrl: imageUrl,
+            publicId: publicId
+          };
+          _context.prev = 27;
+          _context.next = 30;
           return newClient.save();
-        case 18:
+        case 30:
           res.status(201).json({
             message: "User successfully created",
             cliente: newClient
           });
-          _context.next = 25;
+          _context.next = 37;
           break;
-        case 21:
-          _context.prev = 21;
-          _context.t0 = _context["catch"](14);
+        case 33:
+          _context.prev = 33;
+          _context.t0 = _context["catch"](27);
           res.status(400).json(_context.t0);
           next();
-        case 25:
+        case 37:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[14, 21]]);
+    }, _callee, null, [[27, 33]]);
   }));
   return function signUp(_x, _x2, _x3) {
     return _ref.apply(this, arguments);
@@ -111,7 +140,10 @@ var login = /*#__PURE__*/function () {
           _context2.next = 3;
           return client.findOne({
             email: email
-          }).populate("roles");
+          }).populate({
+            path: "roles",
+            select: "name -_id"
+          });
         case 3:
           userFound = _context2.sent;
           if (userFound) {
@@ -137,7 +169,7 @@ var login = /*#__PURE__*/function () {
             expiresIn: 86400
           });
           res.status(200).json({
-            user: userFound,
+            user: userFound.roles,
             token: token
           });
         case 11:

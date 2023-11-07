@@ -51,6 +51,7 @@ const productSchema = new Schema(
     sizes: [
       {
         size: String,
+        stock: Number,
       },
     ],
     tags: [

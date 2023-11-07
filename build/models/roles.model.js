@@ -9,4 +9,4 @@ var roleSchema = new Schema({
 }, {
   versionKey: false
 });
-module.exports = mongoose.model("rol", roleSchema);
+module.exports = mongoose.model("roles", roleSchema);

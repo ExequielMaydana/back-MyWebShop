@@ -17,4 +17,4 @@ var imagesSchema = new Schema({
 }, {
   versionKey: false
 });
-module.exports = mongoose.model("Images", imagesSchema);
+module.exports = mongoose.model("images", imagesSchema);
