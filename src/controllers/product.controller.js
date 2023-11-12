@@ -149,6 +149,20 @@ const getProductByParam = async (req, res, next) => {
   }
 };
 
+const searchProductByName = async (req, res, next) => {
+  const { name } = req.query;
+
+  try {
+    const productFound = await product.find({
+      name: { $regex: new RegExp(name, "i") },
+    });
+
+    res.status(200).json(productFound);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al buscar productos por nombre" });
+  }
+};
 module.exports = {
   postProduct,
   getAllProduct,
@@ -156,4 +170,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   getProductByParam,
+  searchProductByName,
 };
