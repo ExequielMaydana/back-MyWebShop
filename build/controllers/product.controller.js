@@ -320,11 +320,48 @@ var getProductByParam = /*#__PURE__*/function () {
     return _ref6.apply(this, arguments);
   };
 }();
+var searchProductByName = /*#__PURE__*/function () {
+  var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(req, res, next) {
+    var name, productFound;
+    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+      while (1) switch (_context7.prev = _context7.next) {
+        case 0:
+          name = req.query.name;
+          _context7.prev = 1;
+          _context7.next = 4;
+          return product.find({
+            name: {
+              $regex: new RegExp(name, "i")
+            }
+          });
+        case 4:
+          productFound = _context7.sent;
+          res.status(200).json(productFound);
+          _context7.next = 12;
+          break;
+        case 8:
+          _context7.prev = 8;
+          _context7.t0 = _context7["catch"](1);
+          console.error(_context7.t0);
+          res.status(500).json({
+            error: "Error al buscar productos por nombre"
+          });
+        case 12:
+        case "end":
+          return _context7.stop();
+      }
+    }, _callee7, null, [[1, 8]]);
+  }));
+  return function searchProductByName(_x19, _x20, _x21) {
+    return _ref7.apply(this, arguments);
+  };
+}();
 module.exports = {
   postProduct: postProduct,
   getAllProduct: getAllProduct,
   getProductById: getProductById,
   updateProduct: updateProduct,
   deleteProduct: deleteProduct,
-  getProductByParam: getProductByParam
+  getProductByParam: getProductByParam,
+  searchProductByName: searchProductByName
 };

@@ -8,6 +8,7 @@ var productController = require("../controllers/product.controller");
 var upload = require("../libs/multerConfig");
 router.route("/").get(productController.getAllProduct);
 router.route("/search").get(productController.getProductByParam);
+router.route("/searchbyname").get(productController.searchProductByName);
 router.route("/crear-producto").post(
 // [verifyToken, isAdmin],
 upload.array("files", 10), productController.postProduct);
