@@ -11,7 +11,8 @@ mongoose
 
 // mongoose
 //   .connect(
-//     `mongodb+srv://closetwithoutgender:megustaelarte@closetwithoutgender.dcdm7bq.mongodb.net/`,
+//     ``,
+
 //     {
 //       useNewUrlParser: true,
 //       useUnifiedTopology: true,
