@@ -22,9 +22,15 @@ createRoles();
 
 // Setings
 const port = process.env.PORT;
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://closetwithoutgender.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: allowedOrigins,
   })
 );
 app.use(cookieParser());
